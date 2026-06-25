@@ -44,7 +44,7 @@ public class SecurityConf {
       var oidcUser = (OidcUser) authentication.getPrincipal();
       String email = oidcUser.getEmail();
       if (!adminChecker.isAdmin(email)) {
-        throw new AccessDeniedException("You're not a Vola Administrator");
+        throw new AccessDeniedException("You are not an administrator of HIBENTO");
       }
       response.sendRedirect("/payments");
     };
