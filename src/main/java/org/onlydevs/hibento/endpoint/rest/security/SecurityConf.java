@@ -23,11 +23,7 @@ public class SecurityConf {
     http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers("/ping", "/health/**")
-                    .permitAll()
-                    .requestMatchers("/events/**", "/sessions/**", "/speakers/**", "/rooms/**")
-                    .authenticated()
-                    .anyRequest()
-                    .denyAll())
+                    .permitAll().anyRequest().authenticated())
         .oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()))
         .logout(LogoutConfigurer::permitAll)
         .csrf(
@@ -46,7 +42,7 @@ public class SecurityConf {
       if (!adminChecker.isAdmin(email)) {
         throw new AccessDeniedException("You are not an administrator of HIBENTO");
       }
-      response.sendRedirect("/payments");
+      response.sendRedirect("/");
     };
   }
 }
