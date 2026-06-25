@@ -16,5 +16,7 @@ spring:
             jwk-set-uri: ${CASDOOR_ISSUER_URI}/.well-known/jwks
             user-info-uri: ${CASDOOR_ISSUER_URI}/api/userinfo
             user-name-attribute: sub
+  flyway:
+    baseline-on-migrate: true
 hibento:
   admins: ${HIBENTO_ADMINS}
