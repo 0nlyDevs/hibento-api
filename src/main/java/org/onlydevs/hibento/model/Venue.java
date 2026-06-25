@@ -14,10 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "venue")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Venue {
   @Id

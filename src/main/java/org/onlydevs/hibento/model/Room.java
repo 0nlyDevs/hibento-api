@@ -14,11 +14,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table
 @AllArgsConstructor
 @Data
+@NoArgsConstructor
 public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
