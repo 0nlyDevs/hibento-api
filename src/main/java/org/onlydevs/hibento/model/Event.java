@@ -1,12 +1,5 @@
 package org.onlydevs.hibento.model;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,9 +10,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "event")
@@ -34,8 +32,7 @@ public class Event {
   @Column(length = 255)
   private String title;
 
-  @Column
-  private String description;
+  @Column private String description;
 
   @Column(name = "is_online")
   private boolean isOnline;
@@ -58,6 +55,6 @@ public class Event {
   private List<EventSession> eventSessions;
 
   @ManyToOne
-  @JoinColumn(name = "venue_id", nullable = false)
+  @JoinColumn(name = "venue_id")
   private Venue venue;
 }
