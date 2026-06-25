@@ -1,6 +1,8 @@
 package org.onlydevs.hibento.model;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,4 +49,9 @@ public class Venue {
   @UpdateTimestamp
   private Instant updatedAt;
 
+  @OneToMany(mappedBy = "venue")
+  List<Room> rooms = new ArrayList<>();
+
+  @OneToMany(mappedBy = "venue")
+  List<Event> events = new ArrayList<>();
 }
