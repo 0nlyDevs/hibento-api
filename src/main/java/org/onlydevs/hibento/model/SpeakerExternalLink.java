@@ -1,11 +1,5 @@
 package org.onlydevs.hibento.model;
 
-import java.time.Instant;
-import java.util.UUID;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.onlydevs.hibento.model.enums.LinkType;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,12 +10,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.onlydevs.hibento.model.enums.LinkType;
 
 @Entity
 @Table(name = "speaker_external_link")
@@ -40,8 +38,7 @@ public class SpeakerExternalLink {
   @Enumerated(EnumType.STRING)
   private LinkType linkType;
 
-  @Column
-  private String url;
+  @Column private String url;
 
   @Column(name = "created_at")
   @CreationTimestamp
