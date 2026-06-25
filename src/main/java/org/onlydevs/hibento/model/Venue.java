@@ -1,0 +1,48 @@
+package org.onlydevs.hibento.model;
+
+import java.time.Instant;
+import java.util.UUID;
+
+import org.checkerframework.checker.units.qual.C;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Entity
+@Table(name = "venue")
+@AllArgsConstructor
+@Data
+public class Venue {
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
+  @Column(length = 255)
+  private String name;
+
+  @Column(length = 255)
+  private String city;
+
+  @Column(length = 255)
+  private String neighborhood;
+
+  @Column(name = "total_rooms")
+  private int totalRooms;
+
+  @Column(name = "created_at")
+  @CreationTimestamp
+  private Instant createdAt;
+
+  @Column(name = "updated_at")
+  @UpdateTimestamp
+  private Instant updatedAt;
+
+}
