@@ -1,6 +1,7 @@
 package org.onlydevs.hibento.model;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,29 +23,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "event")
-@Data
+@Table(name = "event_session")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+@Data
+public class EventSession {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(length = 255)
+  @Column
   private String title;
 
-  @Column
+  @Column(nullable = true)
   private String description;
 
-  @Column(name = "is_online")
-  private boolean isOnline;
+  @Column(name = "start_time", unique = true)
+  private Instant startTime;
 
-  @Column(name = "start_date")
-  private Instant startDate;
+  @Column(name = "end_time")
+  private Instant endTime;
 
-  @Column(name = "end_date")
-  private Instant endDate;
+  @Column(nullable = true)
+  private Integer capacity;
 
   @Column(name = "created_at")
   @CreationTimestamp
@@ -54,10 +55,20 @@ public class Event {
   @UpdateTimestamp
   private Instant updatedAt;
 
-  @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<EventSession> eventSessions;
+  @ManyToOne
+  @JoinColumn(name = "event_id", nullable = false)
+  private Event event;
 
   @ManyToOne
-  @JoinColumn(name = "venue_id", nullable = false)
-  private Venue venue;
+  @JoinColumn(name = "room_id", nullable = false, unique = true)
+  private Room room;
+
+  @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<EventSessionSpeaker> eventSessionSpeakers = new ArrayList<>();
+
+  @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Question> questions = new ArrayList<>();
+
+  @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<SessionRegistration> registrations;
 }

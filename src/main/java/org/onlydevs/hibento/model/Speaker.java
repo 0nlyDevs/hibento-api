@@ -47,6 +47,9 @@ public class Speaker {
   @UpdateTimestamp
   private Instant updatedAt;
 
-  @OneToMany(mappedBy = "speaker", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "speaker", cascade = CascadeType.ALL, orphanRemoval = true)
   List<SpeakerExternalLink> speakerExternalLinks = new ArrayList<>();
+
+  @OneToMany(mappedBy = "speaker", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<EventSessionSpeaker> eventSessionSpeakers = new ArrayList<>();
 }

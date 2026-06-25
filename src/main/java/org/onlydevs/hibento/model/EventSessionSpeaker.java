@@ -18,30 +18,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "event_session_speaker")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Question {
+public class EventSessionSpeaker {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-
-  @Column
-  private String content;
-
-  @Column(nullable = true, name = "author_name")
-  private String authorName;
-
-  @Column
-  private Integer upvotes;
 
   @Column(name = "created_at")
   @CreationTimestamp
   private Instant createdAt;
 
   @ManyToOne
+  @JoinColumn(name = "speaker_id", nullable = false)
+  private Speaker speaker;
+
+  @ManyToOne
   @JoinColumn(name = "event_session_id", nullable = false)
   private EventSession eventSession;
-
 }

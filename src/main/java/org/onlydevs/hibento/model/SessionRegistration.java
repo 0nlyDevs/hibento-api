@@ -18,30 +18,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "session_registration")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Question {
+public class SessionRegistration {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column
-  private String content;
+  @Column(length = 255)
+  private String name;
 
-  @Column(nullable = true, name = "author_name")
-  private String authorName;
-
-  @Column
-  private Integer upvotes;
+  @Column(length = 255, unique = true)
+  private String email;
 
   @Column(name = "created_at")
   @CreationTimestamp
   private Instant createdAt;
 
   @ManyToOne
-  @JoinColumn(name = "event_session_id", nullable = false)
+  @JoinColumn(name = "event_session_id", nullable = false, unique = true)
   private EventSession eventSession;
-
 }
