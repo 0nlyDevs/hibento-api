@@ -16,25 +16,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
-@Table(name = "venue")
+@Table
 @AllArgsConstructor
 @Data
-public class Venue {
+public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(length = 255)
+  @Column(length = 100)
   private String name;
 
-  @Column(length = 255)
-  private String city;
-
-  @Column(length = 255)
-  private String neighborhood;
-
-  @Column(name = "total_rooms")
-  private int totalRooms;
+  @Column(nullable = true)
+  private Integer capacity;
 
   @Column(name = "created_at")
   @CreationTimestamp
@@ -43,5 +37,4 @@ public class Venue {
   @Column(name = "updated_at")
   @UpdateTimestamp
   private Instant updatedAt;
-
 }
