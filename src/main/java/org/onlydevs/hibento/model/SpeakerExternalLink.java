@@ -1,50 +1,45 @@
 package org.onlydevs.hibento.model;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.onlydevs.hibento.model.enums.LinkType;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "speaker_external_link")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class Speaker {
+public class SpeakerExternalLink {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(length = 255)
-  private String name;
+  @Column(name = "link_type")
+  @Enumerated(EnumType.STRING)
+  private LinkType linkType;
 
-  @Column(name = "avatar_url", nullable = true)
-  private String avatarUrl;
-
-  @Column(nullable = true)
-  private String bio;
+  @Column
+  private String url;
 
   @Column(name = "created_at")
   @CreationTimestamp
   private Instant createdAt;
 
-  @Column(name = "updated_at")
-  @UpdateTimestamp
-  private Instant updatedAt;
-
-  @OneToMany(mappedBy = "speaker", cascade = CascadeType.ALL)
-  List<SpeakerExternalLink> speakerExternalLinks = new ArrayList<>();
+  @ManyToOne
+  private Speaker speaker;
 }
