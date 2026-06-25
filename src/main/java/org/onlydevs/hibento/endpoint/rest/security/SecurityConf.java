@@ -23,7 +23,9 @@ public class SecurityConf {
     http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers("/ping", "/health/**")
-                    .permitAll().anyRequest().authenticated())
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         .oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()))
         .logout(LogoutConfigurer::permitAll)
         .csrf(
