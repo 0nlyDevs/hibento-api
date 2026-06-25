@@ -17,16 +17,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "speaker_external_link")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpeakerExternalLink {
   @Id
+  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
@@ -43,5 +49,6 @@ public class SpeakerExternalLink {
 
   @ManyToOne
   @JoinColumn(name = "speaker_id", nullable = false)
+  @ToString.Exclude
   private Speaker speaker;
 }

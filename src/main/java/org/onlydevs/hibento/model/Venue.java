@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,9 +24,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "venue")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Venue {
   @Id
+  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
@@ -48,8 +54,10 @@ public class Venue {
   private Instant updatedAt;
 
   @OneToMany(mappedBy = "venue")
+  @ToString.Exclude
   List<Room> rooms = new ArrayList<>();
 
   @OneToMany(mappedBy = "venue")
+  @ToString.Exclude
   List<Event> events = new ArrayList<>();
 }

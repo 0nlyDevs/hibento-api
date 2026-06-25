@@ -12,8 +12,11 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -22,9 +25,12 @@ import org.hibernate.annotations.CreationTimestamp;
     indexes = {@Index(columnList = "event_session_id"), @Index(columnList = "upvotes")})
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Question {
   @Id
+  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
@@ -41,5 +47,6 @@ public class Question {
 
   @ManyToOne
   @JoinColumn(name = "event_session_id", nullable = false)
+  @ToString.Exclude
   private EventSession eventSession;
 }

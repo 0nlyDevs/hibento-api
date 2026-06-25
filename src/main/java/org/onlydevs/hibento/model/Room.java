@@ -16,8 +16,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,10 +30,13 @@ import org.hibernate.annotations.UpdateTimestamp;
     uniqueConstraints = @UniqueConstraint(columnNames = {"venue_id", "name"}),
     indexes = @Index(columnList = "venue_id"))
 @AllArgsConstructor
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Room {
   @Id
+  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
@@ -50,8 +56,10 @@ public class Room {
 
   @ManyToOne
   @JoinColumn(name = "venue_id")
+  @ToString.Exclude
   private Venue venue;
 
   @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+  @ToString.Exclude
   List<EventSession> eventSessions;
 }

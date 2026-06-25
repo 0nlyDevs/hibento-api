@@ -17,8 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -33,9 +36,12 @@ import org.hibernate.annotations.UpdateTimestamp;
     })
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EventSession {
   @Id
+  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
@@ -63,18 +69,23 @@ public class EventSession {
 
   @ManyToOne
   @JoinColumn(name = "event_id", nullable = false)
+  @ToString.Exclude
   private Event event;
 
   @ManyToOne
   @JoinColumn(name = "room_id")
+  @ToString.Exclude
   private Room room;
 
   @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  @ToString.Exclude
   private List<EventSessionSpeaker> eventSessionSpeakers = new ArrayList<>();
 
   @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  @ToString.Exclude
   private List<Question> questions = new ArrayList<>();
 
   @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
+  @ToString.Exclude
   private List<SessionRegistration> registrations;
 }
