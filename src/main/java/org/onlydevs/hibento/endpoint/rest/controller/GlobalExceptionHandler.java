@@ -2,7 +2,7 @@ package org.onlydevs.hibento.endpoint.rest.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import org.onlydevs.hibento.dto.ErrorResponse;
+import org.onlydevs.hibento.endpoint.rest.controller.dto.response.ErrorResponse;
 import org.onlydevs.hibento.endpoint.rest.security.ForbiddenException;
 import org.onlydevs.hibento.endpoint.rest.security.UnauthorizedException;
 import org.onlydevs.hibento.model.exception.BadRequestException;
