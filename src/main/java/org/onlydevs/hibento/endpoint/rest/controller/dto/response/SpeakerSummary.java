@@ -1,7 +1,6 @@
 package org.onlydevs.hibento.endpoint.rest.controller.dto.response;
 
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
