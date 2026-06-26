@@ -1,5 +1,6 @@
 package org.onlydevs.hibento.service;
 
+import lombok.AllArgsConstructor;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.CreateSpeaker;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.CreatedSpeaker;
 import org.onlydevs.hibento.mapper.SpeakerMapper;
@@ -9,8 +10,6 @@ import org.onlydevs.hibento.model.enums.LinkType;
 import org.onlydevs.hibento.repository.SpeakerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -25,22 +24,24 @@ public class SpeakerService {
     speaker.setAvatarUrl(request.getAvatarUrl());
     speaker.setBio(request.getBio());
     if (request.getExternalLinks() != null && !request.getExternalLinks().isEmpty()) {
-      var links = request.getExternalLinks().stream()
-          .map(linkRequest -> {
-            LinkType linkType;
-            try {
-              linkType = LinkType.valueOf(linkRequest.getType().toUpperCase());
-            } catch (IllegalArgumentException e) {
-              linkType = LinkType.OTHER;
-            }
+      var links =
+          request.getExternalLinks().stream()
+              .map(
+                  linkRequest -> {
+                    LinkType linkType;
+                    try {
+                      linkType = LinkType.valueOf(linkRequest.getType().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                      linkType = LinkType.OTHER;
+                    }
 
-            return SpeakerExternalLink.builder()
-                .speaker(speaker)
-                .linkType(linkType)
-                .url(linkRequest.getUrl())
-                .build();
-          })
-          .toList();
+                    return SpeakerExternalLink.builder()
+                        .speaker(speaker)
+                        .linkType(linkType)
+                        .url(linkRequest.getUrl())
+                        .build();
+                  })
+              .toList();
 
       speaker.setSpeakerExternalLinks(links);
     }

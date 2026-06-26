@@ -44,10 +44,7 @@ public class SpeakerExternalLink {
   @Enumerated(EnumType.STRING)
   private LinkType linkType;
 
-  @Column
-  @URL
-  @NotBlank
-  private String url;
+  @Column @URL @NotBlank private String url;
 
   @Column(name = "created_at")
   @CreationTimestamp

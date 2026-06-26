@@ -14,9 +14,9 @@ public class SpeakerMapper {
         speaker.getAvatarUrl(),
         speaker.getBio(),
         speaker.getSpeakerExternalLinks().stream()
-            .map(link -> new ExternalLinkDto(
-                link.getLinkType().toString().toLowerCase(),
-                link.getUrl()))
+            .map(
+                link ->
+                    new ExternalLinkDto(link.getLinkType().toString().toLowerCase(), link.getUrl()))
             .toList(),
         speaker.getCreatedAt(),
         speaker.getUpdatedAt());

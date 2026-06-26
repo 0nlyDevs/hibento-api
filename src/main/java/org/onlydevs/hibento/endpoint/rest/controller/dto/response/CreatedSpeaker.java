@@ -3,14 +3,12 @@ package org.onlydevs.hibento.endpoint.rest.controller.dto.response;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-
-import org.onlydevs.hibento.endpoint.rest.controller.dto.ExternalLinkDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.onlydevs.hibento.endpoint.rest.controller.dto.ExternalLinkDto;
 
 @Builder
 @Setter
