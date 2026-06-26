@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.URL;
 import org.onlydevs.hibento.model.enums.LinkType;
 
+@Builder
 @Entity
 @Table(name = "speaker_external_link")
 @AllArgsConstructor
@@ -42,7 +44,10 @@ public class SpeakerExternalLink {
   @Enumerated(EnumType.STRING)
   private LinkType linkType;
 
-  @Column @URL @NotBlank private String url;
+  @Column
+  @URL
+  @NotBlank
+  private String url;
 
   @Column(name = "created_at")
   @CreationTimestamp
