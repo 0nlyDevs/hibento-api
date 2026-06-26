@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-import java.util.stream.Collectors;
 import org.onlydevs.hibento.dto.ErrorResponse;
 import org.onlydevs.hibento.endpoint.rest.security.ForbiddenException;
 import org.onlydevs.hibento.endpoint.rest.security.UnauthorizedException;
@@ -64,8 +63,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-    var message =
-        "Invalid value for parameter '%s': '%s'".formatted(ex.getName(), ex.getValue());
+    var message = "Invalid value for parameter '%s': '%s'".formatted(ex.getName(), ex.getValue());
     return ResponseEntity.status(BAD_REQUEST).body(new ErrorResponse(message));
   }
 
@@ -79,8 +77,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ErrorResponse> handleMessageNotReadable(
       HttpMessageNotReadableException ex) {
-    return ResponseEntity.status(BAD_REQUEST)
-        .body(new ErrorResponse("Malformed request body"));
+    return ResponseEntity.status(BAD_REQUEST).body(new ErrorResponse("Malformed request body"));
   }
 
   @ExceptionHandler(AccessDeniedException.class)
