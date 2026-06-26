@@ -1,4 +1,19 @@
 spring:
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/hibento}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: false
+        use_sql_comments: true
+    open-in-view: false
   security:
     oauth2:
       client:
@@ -20,3 +35,4 @@ spring:
     baseline-on-migrate: true
 hibento:
   admins: ${HIBENTO_ADMINS}
+
