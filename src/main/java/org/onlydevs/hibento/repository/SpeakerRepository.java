@@ -23,4 +23,6 @@ public interface SpeakerRepository extends JpaRepository<Speaker, UUID> {
         "eventSessionSpeakers.eventSession.room"
       })
   Optional<Speaker> findById(UUID id);
+
+  boolean existsById(UUID id);
 }

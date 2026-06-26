@@ -16,7 +16,8 @@ public class SpeakerMapper {
         speaker.getBio(),
         speaker.getSpeakerExternalLinks().stream()
             .map(
-                link -> new ExternalLinkDto(link.getLinkType().toString().toLowerCase(), link.getUrl()))
+                link ->
+                    new ExternalLinkDto(link.getLinkType().toString().toLowerCase(), link.getUrl()))
             .toList(),
         speaker.getCreatedAt(),
         speaker.getUpdatedAt());
@@ -30,10 +31,10 @@ public class SpeakerMapper {
         speaker.getBio(),
         speaker.getSpeakerExternalLinks().stream()
             .map(
-                link -> new ExternalLinkDto(link.getLinkType().toString().toLowerCase(), link.getUrl()))
+                link ->
+                    new ExternalLinkDto(link.getLinkType().toString().toLowerCase(), link.getUrl()))
             .toList(),
         speaker.getCreatedAt(),
         speaker.getUpdatedAt());
   }
-
 }

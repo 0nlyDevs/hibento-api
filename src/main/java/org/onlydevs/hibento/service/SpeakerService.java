@@ -1,10 +1,8 @@
 package org.onlydevs.hibento.service;
 
-import lombok.AllArgsConstructor;
-
 import java.util.List;
 import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.CreateExternalLink;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.CreateSpeaker;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.UpdateSpeaker;
@@ -31,23 +29,24 @@ public class SpeakerService {
     speaker.setAvatarUrl(request.getAvatarUrl());
     speaker.setBio(request.getBio());
     if (request.getExternalLinks() != null && !request.getExternalLinks().isEmpty()) {
-      var links = request.getExternalLinks().stream()
-          .map(
-              linkRequest -> {
-                LinkType linkType;
-                try {
-                  linkType = LinkType.valueOf(linkRequest.getType().toUpperCase());
-                } catch (IllegalArgumentException e) {
-                  linkType = LinkType.OTHER;
-                }
+      var links =
+          request.getExternalLinks().stream()
+              .map(
+                  linkRequest -> {
+                    LinkType linkType;
+                    try {
+                      linkType = LinkType.valueOf(linkRequest.getType().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                      linkType = LinkType.OTHER;
+                    }
 
-                return SpeakerExternalLink.builder()
-                    .speaker(speaker)
-                    .linkType(linkType)
-                    .url(linkRequest.getUrl())
-                    .build();
-              })
-          .toList();
+                    return SpeakerExternalLink.builder()
+                        .speaker(speaker)
+                        .linkType(linkType)
+                        .url(linkRequest.getUrl())
+                        .build();
+                  })
+              .toList();
 
       speaker.setSpeakerExternalLinks(links);
     }
@@ -57,7 +56,8 @@ public class SpeakerService {
 
   @Transactional
   public UpdatedSpeaker updateSpeaker(UUID id, UpdateSpeaker request) {
-    Speaker speaker = speakerRepository.findById(id).orElseThrow(() -> new RuntimeException("Speaker not found"));
+    Speaker speaker =
+        speakerRepository.findById(id).orElseThrow(() -> new RuntimeException("Speaker not found"));
     speaker.setName(request.getName());
     speaker.setAvatarUrl(request.getAvatarUrl());
     speaker.setBio(request.getBio());
@@ -66,19 +66,29 @@ public class SpeakerService {
     return speakerMapper.toUpdatedSpeaker(updatedSpeaker);
   }
 
+  @Transactional
+  public void deleteSpeaker(UUID id) {
+    if (!speakerRepository.existsById(id)) {
+      throw new RuntimeException("Speaker with id: " + id + " doesn't exist.");
+    }
+    speakerRepository.deleteById(id);
+  }
+
   private void updateExternalLinks(Speaker speaker, List<CreateExternalLink> externalLinks) {
     speaker.getSpeakerExternalLinks().clear();
     if (externalLinks != null && !externalLinks.isEmpty()) {
-      var newLinks = externalLinks.stream()
-          .map(linkRequest -> {
-            LinkType linkType = parseLinkType(linkRequest.getType());
-            return SpeakerExternalLink.builder()
-                .speaker(speaker)
-                .linkType(linkType)
-                .url(linkRequest.getUrl())
-                .build();
-          })
-          .toList();
+      var newLinks =
+          externalLinks.stream()
+              .map(
+                  linkRequest -> {
+                    LinkType linkType = parseLinkType(linkRequest.getType());
+                    return SpeakerExternalLink.builder()
+                        .speaker(speaker)
+                        .linkType(linkType)
+                        .url(linkRequest.getUrl())
+                        .build();
+                  })
+              .toList();
       speaker.getSpeakerExternalLinks().addAll(newLinks);
     }
   }

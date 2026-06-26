@@ -1,4 +1,3 @@
-
 package org.onlydevs.hibento.endpoint.rest.controller.dto.response;
 
 import java.time.Instant;

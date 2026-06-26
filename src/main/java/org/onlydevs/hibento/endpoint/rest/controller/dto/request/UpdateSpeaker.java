@@ -23,6 +23,5 @@ public class UpdateSpeaker {
   private String avatarUrl;
 
   private String bio;
-  @Valid
-  private List<CreateExternalLink> externalLinks;
+  @Valid private List<CreateExternalLink> externalLinks;
 }
