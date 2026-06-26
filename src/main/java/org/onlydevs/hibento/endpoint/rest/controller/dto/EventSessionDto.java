@@ -1,13 +1,12 @@
 package org.onlydevs.hibento.endpoint.rest.controller.dto;
 
+import java.time.Instant;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Builder
 @AllArgsConstructor

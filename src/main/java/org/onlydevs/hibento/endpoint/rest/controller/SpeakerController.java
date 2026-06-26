@@ -1,9 +1,7 @@
 package org.onlydevs.hibento.endpoint.rest.controller;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.PaginatedResponse;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.SpeakerDetail;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.SpeakerSummary;
@@ -31,9 +29,10 @@ public class SpeakerController {
       @RequestParam(defaultValue = "name") String sortBy,
       @RequestParam(defaultValue = "asc") String sortDir) {
 
-    Sort sort = sortDir.equalsIgnoreCase("desc")
-        ? Sort.by(sortBy).descending()
-        : Sort.by(sortBy).ascending();
+    Sort sort =
+        sortDir.equalsIgnoreCase("desc")
+            ? Sort.by(sortBy).descending()
+            : Sort.by(sortBy).ascending();
 
     var pageable = PageRequest.of(page, limit, sort);
 

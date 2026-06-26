@@ -1,9 +1,7 @@
 package org.onlydevs.hibento.service;
 
-import lombok.AllArgsConstructor;
-
 import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.PaginatedResponse;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.Pagination;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.SpeakerDetail;
@@ -31,8 +29,8 @@ public class SpeakerService {
 
   @Transactional(readOnly = true)
   public SpeakerDetail getSpeakerById(UUID id) {
-    var speaker = speakerRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+    var speaker =
+        speakerRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
     return speakerMapper.toSpeakerDetail(speaker);
   }
-
 }

@@ -11,11 +11,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpeakerRepository extends JpaRepository<Speaker, UUID> {
-  @EntityGraph(attributePaths = { "eventSessionSpeakers" })
+  @EntityGraph(attributePaths = {"eventSessionSpeakers"})
   Page<Speaker> findAll(Pageable pageable);
 
   @Override
-  @EntityGraph(attributePaths = { "eventSessionSpeakers", "speakerExternalLinks",
-      "eventSessionSpeakers.eventSession.event", "eventSessionSpeakers.eventSession.room" })
+  @EntityGraph(
+      attributePaths = {
+        "eventSessionSpeakers",
+        "speakerExternalLinks",
+        "eventSessionSpeakers.eventSession.event",
+        "eventSessionSpeakers.eventSession.room"
+      })
   Optional<Speaker> findById(UUID id);
 }
