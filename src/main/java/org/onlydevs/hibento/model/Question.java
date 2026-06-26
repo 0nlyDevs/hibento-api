@@ -9,6 +9,10 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -34,12 +38,18 @@ public class Question {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column private String content;
+  @Column
+  @NotBlank
+  @Size(min = 1, max = 1000, message = "Content length must be within 1 and 1000 characters")
+  private String content;
 
   @Column(name = "author_name", length = 100, nullable = false)
+  @NotNull
   private String authorName = "Anonymous";
 
-  @Column private int upvotes;
+  @Column
+  @Min(0)
+  private int upvotes;
 
   @Column(name = "created_at")
   @CreationTimestamp

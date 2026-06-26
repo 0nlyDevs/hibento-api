@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "speaker")
@@ -38,6 +39,7 @@ public class Speaker {
   private String name;
 
   @Column(name = "avatar_url", nullable = true)
+  @URL
   private String avatarUrl;
 
   @Column(nullable = true)

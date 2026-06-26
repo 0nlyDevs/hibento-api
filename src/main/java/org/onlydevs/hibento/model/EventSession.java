@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +47,17 @@ public class EventSession {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column private String title;
+  @Column @NotBlank private String title;
 
   @Column(nullable = true)
   private String description;
 
   @Column(name = "start_time")
+  @NotNull
   private Instant startTime;
 
   @Column(name = "end_time")
+  @NotNull
   private Instant endTime;
 
   @Column(nullable = true)

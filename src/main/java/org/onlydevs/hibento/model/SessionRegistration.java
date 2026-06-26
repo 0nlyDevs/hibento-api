@@ -10,6 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -37,9 +40,14 @@ public class SessionRegistration {
   private UUID id;
 
   @Column(length = 255)
+  @NotNull
+  @NotBlank
   private String name;
 
   @Column(length = 255)
+  @NotNull
+  @NotBlank
+  @Email(message = "Incorrect email format")
   private String email;
 
   @Column(name = "created_at")

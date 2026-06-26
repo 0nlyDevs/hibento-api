@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +36,19 @@ public class Venue {
   private UUID id;
 
   @Column(length = 255)
+  @NotBlank
   private String name;
 
   @Column(length = 255)
+  @NotBlank
   private String city;
 
   @Column(length = 255)
+  @NotBlank
   private String neighborhood;
 
   @Column(name = "total_rooms")
+  @Min(value = 1)
   private int totalRooms;
 
   @Column(name = "created_at")

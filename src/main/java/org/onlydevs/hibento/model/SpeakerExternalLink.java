@@ -1,5 +1,6 @@
 package org.onlydevs.hibento.model;
 
+import com.sun.istack.NotNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.URL;
 import org.onlydevs.hibento.model.enums.LinkType;
 
 @Entity
@@ -35,10 +38,11 @@ public class SpeakerExternalLink {
   private UUID id;
 
   @Column(name = "link_type")
+  @NotNull
   @Enumerated(EnumType.STRING)
   private LinkType linkType;
 
-  @Column private String url;
+  @Column @URL @NotBlank private String url;
 
   @Column(name = "created_at")
   @CreationTimestamp

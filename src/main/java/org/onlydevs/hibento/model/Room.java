@@ -1,5 +1,6 @@
 package org.onlydevs.hibento.model;
 
+import com.sun.istack.NotNull;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -41,9 +44,12 @@ public class Room {
   private UUID id;
 
   @Column(length = 100)
+  @NotBlank
+  @NotNull
   private String name;
 
   @Column(nullable = true)
+  @Min(value = 1, message = "Room capacity should be at least 1")
   private Integer capacity;
 
   @Column(name = "created_at")
