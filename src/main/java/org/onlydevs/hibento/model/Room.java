@@ -1,6 +1,12 @@
 package org.onlydevs.hibento.model;
 
-import com.sun.istack.NotNull;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,23 +21,17 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(
-    name = "room",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"venue_id", "name"}),
-    indexes = @Index(columnList = "venue_id"))
+@Table(name = "room", uniqueConstraints = @UniqueConstraint(columnNames = { "venue_id",
+    "name" }), indexes = @Index(columnList = "venue_id"))
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
