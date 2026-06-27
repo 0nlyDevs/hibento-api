@@ -16,21 +16,10 @@ spring:
     open-in-view: false
   security:
     oauth2:
-      client:
-        registration:
-          casdoor:
-            client-id: ${CASDOOR_CLIENT_ID}
-            client-secret: ${CASDOOR_CLIENT_SECRET}
-            scope: openid, profile, email
-            authorization-grant-type: authorization_code
-            redirect-uri: "${REDIRECT_URI_BASE}/login/oauth2/code/{registrationId}"
-        provider:
-          casdoor:
-            authorization-uri: ${CASDOOR_ISSUER_URI}/login/oauth/authorize
-            token-uri: ${CASDOOR_ISSUER_URI}/api/login/oauth/access_token
-            jwk-set-uri: ${CASDOOR_ISSUER_URI}/.well-known/jwks
-            user-info-uri: ${CASDOOR_ISSUER_URI}/api/userinfo
-            user-name-attribute: sub
+      resourceserver:
+        jwt:
+          issuer-uri: ${CASDOOR_ISSUER_URI}
+          jwk-set-uri: ${CASDOOR_ISSUER_URI}/.well-known/jwks
   flyway:
     baseline-on-migrate: true
 hibento:
