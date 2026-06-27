@@ -89,7 +89,4 @@ public class EventSession {
   @ToString.Exclude
   private List<Question> questions = new ArrayList<>();
 
-  @OneToMany(mappedBy = "eventSession", cascade = CascadeType.ALL, orphanRemoval = true)
-  @ToString.Exclude
-  private List<SessionRegistration> registrations;
 }
