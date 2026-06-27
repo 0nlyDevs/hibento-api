@@ -35,3 +35,5 @@ spring:
     baseline-on-migrate: true
 hibento:
   admins: ${HIBENTO_ADMINS}
+  cors:
+    allowed-origins: ${HIBENTO_CORS_ALLOWED_ORIGINS:http://localhost:3000}
