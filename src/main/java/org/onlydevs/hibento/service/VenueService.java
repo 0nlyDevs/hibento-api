@@ -34,9 +34,7 @@ public class VenueService {
   @Transactional
   public UpdatedVenue updateVenue(UUID id, UpdateVenue request) {
     Venue venue =
-        venueRepository
-            .findById(id)
-            .orElseThrow(() -> new NotFoundException("Venue not found"));
+        venueRepository.findById(id).orElseThrow(() -> new NotFoundException("Venue not found"));
     venue.setName(request.getName());
     venue.setCity(request.getCity());
     venue.setNeighborhood(request.getNeighborhood());
