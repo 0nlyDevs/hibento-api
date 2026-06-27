@@ -8,6 +8,7 @@ import org.onlydevs.hibento.endpoint.rest.controller.dto.request.CreateSpeaker;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.UpdateSpeaker;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.CreatedSpeaker;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.UpdatedSpeaker;
+import org.onlydevs.hibento.endpoint.rest.controller.NotFoundException;
 import org.onlydevs.hibento.mapper.SpeakerMapper;
 import org.onlydevs.hibento.model.Speaker;
 import org.onlydevs.hibento.model.SpeakerExternalLink;
@@ -57,7 +58,7 @@ public class SpeakerService {
   @Transactional
   public UpdatedSpeaker updateSpeaker(UUID id, UpdateSpeaker request) {
     Speaker speaker =
-        speakerRepository.findById(id).orElseThrow(() -> new RuntimeException("Speaker not found"));
+        speakerRepository.findById(id).orElseThrow(() -> new NotFoundException("Speaker not found"));
     speaker.setName(request.getName());
     speaker.setAvatarUrl(request.getAvatarUrl());
     speaker.setBio(request.getBio());
@@ -69,7 +70,7 @@ public class SpeakerService {
   @Transactional
   public void deleteSpeaker(UUID id) {
     if (!speakerRepository.existsById(id)) {
-      throw new RuntimeException("Speaker with id: " + id + " doesn't exist.");
+      throw new NotFoundException("Speaker with id: " + id + " doesn't exist.");
     }
     speakerRepository.deleteById(id);
   }
