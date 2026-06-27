@@ -1,7 +1,5 @@
 package org.onlydevs.hibento.mapper;
 
-import java.util.List;
-import java.util.UUID;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.CreatedSession;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.UpdatedSession;
 import org.onlydevs.hibento.model.EventSession;
@@ -21,9 +19,7 @@ public class SessionMapper {
         session.getRoom().getId(),
         session.getRoom().getName(),
         session.getCapacity(),
-        session.getEventSessionSpeakers().stream()
-            .map(ess -> ess.getSpeaker().getId())
-            .toList(),
+        session.getEventSessionSpeakers().stream().map(ess -> ess.getSpeaker().getId()).toList(),
         session.getCreatedAt(),
         session.getUpdatedAt());
   }
@@ -39,9 +35,7 @@ public class SessionMapper {
         session.getRoom().getId(),
         session.getRoom().getName(),
         session.getCapacity(),
-        session.getEventSessionSpeakers().stream()
-            .map(ess -> ess.getSpeaker().getId())
-            .toList(),
+        session.getEventSessionSpeakers().stream().map(ess -> ess.getSpeaker().getId()).toList(),
         session.getCreatedAt(),
         session.getUpdatedAt());
   }
