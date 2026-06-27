@@ -1,6 +1,7 @@
 package org.onlydevs.hibento.endpoint.rest.controller.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
@@ -33,5 +34,6 @@ public class UpdateSession {
 
   private Integer capacity;
 
+  @NotEmpty(message = "At least one speaker is required")
   private List<UUID> speakerIds;
 }
