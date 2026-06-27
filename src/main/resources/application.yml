@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -35,4 +35,3 @@ spring:
     baseline-on-migrate: true
 hibento:
   admins: ${HIBENTO_ADMINS}
-
