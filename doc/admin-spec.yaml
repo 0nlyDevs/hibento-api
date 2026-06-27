@@ -970,31 +970,30 @@ components:
           type: string
           format: date-time
 
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: "Event not found"
+
   responses:
     BadRequest:
       description: Invalid request parameters or body
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
-              message:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
-            error: "Validation Error"
-            message: "Start date must be before end date"
+            error: "Start date must be before end date"
 
     Unauthorized:
       description: Not authenticated. Please authenticate via OAuth2.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
             error: "Unauthorized"
 
@@ -1003,10 +1002,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
             error: "Forbidden"
 
@@ -1015,10 +1011,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
             error: "Event not found"
 
@@ -1027,12 +1020,6 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
-              message:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
-            error: "Conflict"
-            message: "Room already has a session during this time"
+            error: "Room already has a session during this time"
