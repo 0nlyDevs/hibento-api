@@ -1,25 +1,14 @@
 openapi: 3.0.3
 info:
-  title: EventSync Admin API
+  title: HIBENTO Admin API
   description: |
-    Admin-only endpoints for EventSync platform.
-    All endpoints require authentication via BetterAuth.
-  
-    BetterAuth Integration:
-    - Authentication is session-based using secure HTTP-only cookies
-    - After login, the browser automatically sends the session cookie
-    - No Authorization header is required in standard usage
-    - Required role: organizer (admin)
-    - BetterAuth handles authentication, session management, and role-based access control
-  
-    Authentication Flow:
-    1. Organizer logs in via `/api/auth/sign-in`
-    2. Server sets a secure session cookie (e.g. `better-auth.session_token`)
-    3. The cookie is automatically included in subsequent requests
-    4. Backend validates session and enforces organizer role
-  
-    Note:
-    - Bearer tokens (JWT) are NOT used unless explicitly configured
+    Admin-only endpoints for HIBENTO event management platform.
+    All endpoints require authentication via OAuth2/OIDC (Casdoor).
+
+    Authentication:
+    - OAuth2 login via Casdoor (OIDC provider)
+    - Admin access is granted based on email whitelist (hibento.admins config)
+    - Users not in the admin whitelist receive a 403 Forbidden response
   version: 1.0.0
 
 servers:
@@ -35,9 +24,8 @@ tags:
     description: Create, update, and delete speakers
   - name: Admin Rooms
     description: Create, update, and delete rooms
-
-security:
-  - BetterAuth: []
+  - name: Admin Venues
+    description: Create, update, and delete venues
 
 paths:
   # ==================== ADMIN EVENTS ====================
@@ -46,20 +34,20 @@ paths:
       tags:
         - Admin Events
       summary: Create a new event
-      description: Creates a new event. Requires organizer authentication via BetterAuth.
       operationId: createEvent
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventCreateRequest'
+              $ref: '#/components/schemas/CreateEvent'
             example:
               title: "DevConf 2025"
               description: "The annual developer conference"
+              online: false
               startDate: "2025-09-15T09:00:00Z"
               endDate: "2025-09-17T18:00:00Z"
-              location: "Anjanahary Convention Center"
+              venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       responses:
         '201':
           description: Event created successfully
@@ -68,12 +56,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventResponse'
               example:
-                id: "evt_1"
+                id: "1a2b3c4d-1234-5678-9abc-def012345678"
                 title: "DevConf 2025"
                 description: "The annual developer conference"
+                online: false
                 startDate: "2025-09-15T09:00:00Z"
                 endDate: "2025-09-17T18:00:00Z"
-                location: "Anjanahary Convention Center"
+                venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 createdAt: "2025-01-15T10:00:00Z"
                 updatedAt: "2025-01-15T10:00:00Z"
         '400':
@@ -88,7 +77,6 @@ paths:
       tags:
         - Admin Events
       summary: Update an event
-      description: Updates an existing event. Requires organizer authentication via BetterAuth.
       operationId: updateEvent
       parameters:
         - $ref: '#/components/parameters/EventId'
@@ -97,11 +85,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventUpdateRequest'
+              $ref: '#/components/schemas/UpdateEvent'
             example:
               title: "DevConf 2025 - Updated"
               description: "The annual developer conference (updated)"
-              location: "New Convention Center"
+              online: false
+              startDate: "2025-09-15T09:00:00Z"
+              endDate: "2025-09-17T18:00:00Z"
+              venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       responses:
         '200':
           description: Event updated successfully
@@ -109,15 +100,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventResponse'
-              example:
-                id: "evt_1"
-                title: "DevConf 2025 - Updated"
-                description: "The annual developer conference (updated)"
-                startDate: "2025-09-15T09:00:00Z"
-                endDate: "2025-09-17T18:00:00Z"
-                location: "New Convention Center"
-                createdAt: "2025-01-15T10:00:00Z"
-                updatedAt: "2025-01-20T14:30:00Z"
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -131,7 +113,6 @@ paths:
       tags:
         - Admin Events
       summary: Delete an event
-      description: Deletes an event and all associated sessions, rooms, and questions. Requires organizer authentication via BetterAuth.
       operationId: deleteEvent
       parameters:
         - $ref: '#/components/parameters/EventId'
@@ -151,7 +132,6 @@ paths:
       tags:
         - Admin Sessions
       summary: Create a session
-      description: Creates a new session for a specific event. Requires organizer authentication via BetterAuth.
       operationId: createSession
       parameters:
         - $ref: '#/components/parameters/EventId'
@@ -160,15 +140,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SessionCreateRequest'
+              $ref: '#/components/schemas/CreateSession'
             example:
               title: "Keynote: The Future of Web"
               description: "Opening keynote about web technologies"
               startTime: "2025-09-15T09:00:00Z"
               endTime: "2025-09-15T10:30:00Z"
-              roomId: "room_1"
+              roomId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               capacity: 500
-              speakerIds: ["spk_1", "spk_2"]
+              speakerIds:
+                - "1a2b3c4d-1234-5678-9abc-def012345678"
+                - "2b3c4d5e-2345-6789-abcd-ef0123456789"
       responses:
         '201':
           description: Session created successfully
@@ -177,16 +159,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/SessionResponse'
               example:
-                id: "sess_1"
-                eventId: "evt_1"
+                id: "3c4d5e6f-3456-789a-bcde-f01234567890"
+                eventId: "1a2b3c4d-1234-5678-9abc-def012345678"
                 title: "Keynote: The Future of Web"
                 description: "Opening keynote about web technologies"
                 startTime: "2025-09-15T09:00:00Z"
                 endTime: "2025-09-15T10:30:00Z"
-                roomId: "room_1"
+                roomId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 roomName: "Grand Hall"
                 capacity: 500
-                speakerIds: ["spk_1", "spk_2"]
+                speakerIds:
+                  - "1a2b3c4d-1234-5678-9abc-def012345678"
+                  - "2b3c4d5e-2345-6789-abcd-ef0123456789"
                 createdAt: "2025-01-15T10:00:00Z"
                 updatedAt: "2025-01-15T10:00:00Z"
         '400':
@@ -197,13 +181,14 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
   /admin/sessions/{sessionId}:
     put:
       tags:
         - Admin Sessions
       summary: Update a session
-      description: Updates an existing session. Requires organizer authentication via BetterAuth.
       operationId: updateSession
       parameters:
         - $ref: '#/components/parameters/SessionId'
@@ -212,14 +197,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SessionUpdateRequest'
+              $ref: '#/components/schemas/UpdateSession'
             example:
               title: "Keynote: The Future of Web (Extended)"
               description: "Updated description"
               startTime: "2025-09-15T09:00:00Z"
               endTime: "2025-09-15T11:00:00Z"
+              roomId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               capacity: 600
-              speakerIds: ["spk_1", "spk_2", "spk_3"]
+              speakerIds:
+                - "1a2b3c4d-1234-5678-9abc-def012345678"
+                - "2b3c4d5e-2345-6789-abcd-ef0123456789"
+                - "3c4d5e6f-3456-789a-bcde-f01234567890"
       responses:
         '200':
           description: Session updated successfully
@@ -235,12 +224,13 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
     delete:
       tags:
         - Admin Sessions
       summary: Delete a session
-      description: Deletes a session and all associated questions. Requires organizer authentication via BetterAuth.
       operationId: deleteSession
       parameters:
         - $ref: '#/components/parameters/SessionId'
@@ -260,23 +250,22 @@ paths:
       tags:
         - Admin Speakers
       summary: Create a speaker
-      description: Creates a new speaker profile. Requires organizer authentication via BetterAuth.
       operationId: createSpeaker
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SpeakerCreateRequest'
+              $ref: '#/components/schemas/CreateSpeaker'
             example:
               name: "Jane Doe"
-              avatarUrl: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+              avatarUrl: "https://cdn.hibento.com/avatars/jane_doe.jpg"
               bio: "Tech lead at WebCorp with 10+ years of experience"
               externalLinks:
-                - type: "twitter"
-                  url: "https://twitter.com/janedoe"
                 - type: "github"
                   url: "https://github.com/janedoe"
+                - type: "x"
+                  url: "https://x.com/janedoe"
       responses:
         '201':
           description: Speaker created successfully
@@ -285,15 +274,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/SpeakerResponse'
               example:
-                id: "spk_1"
+                id: "1a2b3c4d-1234-5678-9abc-def012345678"
                 name: "Jane Doe"
-                avatarUrl: "https://cdn.eventsync.com/avatars/jane_doe.jpg"
+                avatarUrl: "https://cdn.hibento.com/avatars/jane_doe.jpg"
                 bio: "Tech lead at WebCorp with 10+ years of experience"
                 externalLinks:
-                  - type: "twitter"
-                    url: "https://twitter.com/janedoe"
                   - type: "github"
                     url: "https://github.com/janedoe"
+                  - type: "x"
+                    url: "https://x.com/janedoe"
                 createdAt: "2025-01-15T10:00:00Z"
                 updatedAt: "2025-01-15T10:00:00Z"
         '400':
@@ -308,7 +297,6 @@ paths:
       tags:
         - Admin Speakers
       summary: Update a speaker
-      description: Updates an existing speaker profile. Requires organizer authentication via BetterAuth.
       operationId: updateSpeaker
       parameters:
         - $ref: '#/components/parameters/SpeakerId'
@@ -317,13 +305,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SpeakerUpdateRequest'
+              $ref: '#/components/schemas/UpdateSpeaker'
             example:
               name: "Jane Smith"
+              avatarUrl: "https://cdn.hibento.com/avatars/jane_smith.jpg"
               bio: "Senior Tech lead at WebCorp"
               externalLinks:
-                - type: "twitter"
-                  url: "https://twitter.com/janesmith"
+                - type: "github"
+                  url: "https://github.com/janesmith"
                 - type: "linkedin"
                   url: "https://linkedin.com/in/janesmith"
       responses:
@@ -346,7 +335,6 @@ paths:
       tags:
         - Admin Speakers
       summary: Delete a speaker
-      description: Deletes a speaker profile. Requires organizer authentication via BetterAuth.
       operationId: deleteSpeaker
       parameters:
         - $ref: '#/components/parameters/SpeakerId'
@@ -361,23 +349,22 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # ==================== ADMIN ROOMS ====================
-  /admin/events/{eventId}/rooms:
+  /admin/rooms:
     post:
       tags:
         - Admin Rooms
       summary: Create a room
-      description: Creates a new room for a specific event. Requires organizer authentication via BetterAuth.
       operationId: createRoom
-      parameters:
-        - $ref: '#/components/parameters/EventId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoomCreateRequest'
+              $ref: '#/components/schemas/CreateRoom'
             example:
               name: "Workshop Studio"
+              capacity: 50
+              venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       responses:
         '201':
           description: Room created successfully
@@ -386,10 +373,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoomResponse'
               example:
-                id: "room_5"
-                eventId: "evt_1"
+                id: "4d5e6f7a-4567-89ab-cdef-012345678901"
                 name: "Workshop Studio"
+                capacity: 50
+                venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 createdAt: "2025-01-15T10:00:00Z"
+                updatedAt: "2025-01-15T10:00:00Z"
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -404,7 +393,6 @@ paths:
       tags:
         - Admin Rooms
       summary: Update a room
-      description: Updates an existing room. Requires organizer authentication via BetterAuth.
       operationId: updateRoom
       parameters:
         - $ref: '#/components/parameters/RoomId'
@@ -413,9 +401,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoomUpdateRequest'
+              $ref: '#/components/schemas/UpdateRoom'
             example:
               name: "Main Hall"
+              capacity: 200
+              venueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       responses:
         '200':
           description: Room updated successfully
@@ -423,12 +413,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RoomResponse'
-              example:
-                id: "room_1"
-                eventId: "evt_1"
-                name: "Main Hall"
-                createdAt: "2025-01-15T10:00:00Z"
-                updatedAt: "2025-01-20T14:30:00Z"
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -437,12 +421,13 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
     delete:
       tags:
         - Admin Rooms
       summary: Delete a room
-      description: Deletes a room. Requires organizer authentication via BetterAuth.
       operationId: deleteRoom
       parameters:
         - $ref: '#/components/parameters/RoomId'
@@ -456,23 +441,111 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # ==================== ADMIN VENUES ====================
+  /admin/venues:
+    post:
+      tags:
+        - Admin Venues
+      summary: Create a venue
+      operationId: createVenue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVenue'
+            example:
+              name: "Anjanahary Convention Center"
+              city: "Antananarivo"
+              neighborhood: "Anjanahary"
+              totalRooms: 10
+      responses:
+        '201':
+          description: Venue created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueResponse'
+              example:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                name: "Anjanahary Convention Center"
+                city: "Antananarivo"
+                neighborhood: "Anjanahary"
+                totalRooms: 10
+                createdAt: "2025-01-15T10:00:00Z"
+                updatedAt: "2025-01-15T10:00:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/venues/{venueId}:
+    put:
+      tags:
+        - Admin Venues
+      summary: Update a venue
+      operationId: updateVenue
+      parameters:
+        - $ref: '#/components/parameters/VenueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVenue'
+            example:
+              name: "Anjanahary Convention Center"
+              city: "Antananarivo"
+              neighborhood: "Anjanahary"
+              totalRooms: 12
+      responses:
+        '200':
+          description: Venue updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Admin Venues
+      summary: Delete a venue
+      operationId: deleteVenue
+      parameters:
+        - $ref: '#/components/parameters/VenueId'
+      responses:
+        '204':
+          description: Venue deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
-    BetterAuth:
-      type: apiKey
-      in: cookie
-      name: better-auth.session_token
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8080/oauth2/authorization/casdoor
+          scopes:
+            openid: OpenID Connect
+            profile: User profile
       description: |
-        BetterAuth session-based authentication using HTTP-only cookies.
-    
-        How it works:
-        1. POST /api/auth/sign-in with credentials
-        2. Server sets a secure session cookie
-        3. Cookie is automatically sent with requests
-    
-        No Authorization header is required.
-    
-        Access is restricted to users with the 'organizer' role.
+        OAuth2 authentication via Casdoor (OIDC provider).
+        Admin access is granted based on email whitelist.
 
   parameters:
     EventId:
@@ -481,7 +554,8 @@ components:
       required: true
       schema:
         type: string
-      example: "evt_1"
+        format: uuid
+      example: "1a2b3c4d-1234-5678-9abc-def012345678"
 
     SessionId:
       name: sessionId
@@ -489,7 +563,8 @@ components:
       required: true
       schema:
         type: string
-      example: "sess_1"
+        format: uuid
+      example: "3c4d5e6f-3456-789a-bcde-f01234567890"
 
     SpeakerId:
       name: speakerId
@@ -497,7 +572,8 @@ components:
       required: true
       schema:
         type: string
-      example: "spk_1"
+        format: uuid
+      example: "1a2b3c4d-1234-5678-9abc-def012345678"
 
     RoomId:
       name: roomId
@@ -505,10 +581,20 @@ components:
       required: true
       schema:
         type: string
-      example: "room_1"
+        format: uuid
+      example: "4d5e6f7a-4567-89ab-cdef-012345678901"
+
+    VenueId:
+      name: venueId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
   schemas:
-    EventCreateRequest:
+    CreateEvent:
       type: object
       required:
         - title
@@ -520,51 +606,66 @@ components:
           maxLength: 255
         description:
           type: string
+        online:
+          type: boolean
+          default: false
         startDate:
           type: string
           format: date-time
         endDate:
           type: string
           format: date-time
-        location:
+        venueId:
           type: string
-          maxLength: 255
+          format: uuid
 
-    EventUpdateRequest:
+    UpdateEvent:
       type: object
+      required:
+        - title
+        - startDate
+        - endDate
       properties:
         title:
           type: string
           maxLength: 255
         description:
           type: string
+        online:
+          type: boolean
+          default: false
         startDate:
           type: string
           format: date-time
         endDate:
           type: string
           format: date-time
-        location:
+        venueId:
           type: string
-          maxLength: 255
+          format: uuid
 
     EventResponse:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         title:
           type: string
         description:
           type: string
+        online:
+          type: boolean
         startDate:
           type: string
           format: date-time
         endDate:
           type: string
           format: date-time
-        location:
+        venueId:
           type: string
+          format: uuid
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -572,7 +673,7 @@ components:
           type: string
           format: date-time
 
-    SessionCreateRequest:
+    CreateSession:
       type: object
       required:
         - title
@@ -593,6 +694,7 @@ components:
           format: date-time
         roomId:
           type: string
+          format: uuid
         capacity:
           type: integer
           minimum: 0
@@ -600,9 +702,15 @@ components:
           type: array
           items:
             type: string
+            format: uuid
 
-    SessionUpdateRequest:
+    UpdateSession:
       type: object
+      required:
+        - title
+        - startTime
+        - endTime
+        - roomId
       properties:
         title:
           type: string
@@ -617,6 +725,7 @@ components:
           format: date-time
         roomId:
           type: string
+          format: uuid
         capacity:
           type: integer
           minimum: 0
@@ -624,14 +733,17 @@ components:
           type: array
           items:
             type: string
+            format: uuid
 
     SessionResponse:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         eventId:
           type: string
+          format: uuid
         title:
           type: string
         description:
@@ -644,6 +756,7 @@ components:
           format: date-time
         roomId:
           type: string
+          format: uuid
         roomName:
           type: string
         capacity:
@@ -652,6 +765,7 @@ components:
           type: array
           items:
             type: string
+            format: uuid
         createdAt:
           type: string
           format: date-time
@@ -659,7 +773,7 @@ components:
           type: string
           format: date-time
 
-    SpeakerCreateRequest:
+    CreateSpeaker:
       type: object
       required:
         - name
@@ -677,8 +791,10 @@ components:
           items:
             $ref: '#/components/schemas/ExternalLinkInput'
 
-    SpeakerUpdateRequest:
+    UpdateSpeaker:
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
@@ -701,16 +817,25 @@ components:
       properties:
         type:
           type: string
-          enum: [twitter, github, linkedin, website]
+          enum: [website, github, x, linkedin, facebook, instagram, other]
         url:
           type: string
           format: uri
+
+    ExternalLink:
+      type: object
+      properties:
+        type:
+          type: string
+        url:
+          type: string
 
     SpeakerResponse:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         name:
           type: string
         avatarUrl:
@@ -722,12 +847,7 @@ components:
         externalLinks:
           type: array
           items:
-            type: object
-            properties:
-              type:
-                type: string
-              url:
-                type: string
+            $ref: '#/components/schemas/ExternalLink'
         createdAt:
           type: string
           format: date-time
@@ -735,37 +855,128 @@ components:
           type: string
           format: date-time
 
-    RoomCreateRequest:
+    CreateRoom:
       type: object
       required:
         - name
+        - venueId
       properties:
         name:
           type: string
           maxLength: 100
+        capacity:
+          type: integer
+          minimum: 1
+        venueId:
+          type: string
+          format: uuid
 
-    RoomUpdateRequest:
+    UpdateRoom:
       type: object
+      required:
+        - name
+        - venueId
       properties:
         name:
           type: string
           maxLength: 100
+        capacity:
+          type: integer
+          minimum: 1
+        venueId:
+          type: string
+          format: uuid
 
     RoomResponse:
       type: object
       properties:
         id:
           type: string
-        eventId:
-          type: string
+          format: uuid
         name:
           type: string
+        capacity:
+          type: integer
+        venueId:
+          type: string
+          format: uuid
         createdAt:
           type: string
           format: date-time
         updatedAt:
           type: string
           format: date-time
+
+    CreateVenue:
+      type: object
+      required:
+        - name
+        - city
+        - neighborhood
+        - totalRooms
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 255
+        neighborhood:
+          type: string
+          maxLength: 255
+        totalRooms:
+          type: integer
+          minimum: 1
+
+    UpdateVenue:
+      type: object
+      required:
+        - name
+        - city
+        - neighborhood
+        - totalRooms
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 255
+        neighborhood:
+          type: string
+          maxLength: 255
+        totalRooms:
+          type: integer
+          minimum: 1
+
+    VenueResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        city:
+          type: string
+        neighborhood:
+          type: string
+        totalRooms:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: "Event not found"
 
   responses:
     BadRequest:
@@ -773,48 +984,42 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
-              message:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
-            error: "Validation Error"
-            message: "startDate must be before endDate"
+            error: "Start date must be before end date"
 
     Unauthorized:
-      description: Not authenticated. Please sign in via BetterAuth.
+      description: Not authenticated. Please authenticate via OAuth2.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
-            error: "Unauthorized. Please sign in."
+            error: "Unauthorized"
 
     Forbidden:
-      description: Authenticated but not authorized. Organizer role required.
+      description: Authenticated but not authorized as admin.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
-            error: "Forbidden. Organizer role required."
+            error: "Forbidden"
 
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/Error'
           example:
             error: "Event not found"
+
+    Conflict:
+      description: Resource conflict (e.g., time overlap, duplicate name)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Room already has a session during this time"
