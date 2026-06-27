@@ -56,9 +56,7 @@ public class EventService {
   @Transactional
   public UpdatedEvent updateEvent(UUID id, UpdateEvent request) {
     Event event =
-        eventRepository
-            .findById(id)
-            .orElseThrow(() -> new NotFoundException("Event not found"));
+        eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event not found"));
 
     if (request.getStartDate().isAfter(request.getEndDate())) {
       throw new BadRequestException("Start date must be before end date");
