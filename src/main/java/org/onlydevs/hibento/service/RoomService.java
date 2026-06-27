@@ -46,9 +46,7 @@ public class RoomService {
   @Transactional
   public UpdatedRoom updateRoom(UUID id, UpdateRoom request) {
     Room room =
-        roomRepository
-            .findById(id)
-            .orElseThrow(() -> new NotFoundException("Room not found"));
+        roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
 
     if (!room.getVenue().getId().equals(request.getVenueId())) {
       venueRepository
