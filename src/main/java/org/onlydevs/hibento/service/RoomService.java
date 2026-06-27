@@ -26,9 +26,10 @@ public class RoomService {
 
   @Transactional
   public CreatedRoom createRoom(CreateRoom request) {
-    Venue venue = venueRepository
-        .findById(request.getVenueId())
-        .orElseThrow(() -> new NotFoundException("Venue not found"));
+    Venue venue =
+        venueRepository
+            .findById(request.getVenueId())
+            .orElseThrow(() -> new NotFoundException("Venue not found"));
 
     if (roomRepository.existsByVenueIdAndName(request.getVenueId(), request.getName())) {
       throw new ConflictException("Room name already exists in this venue");
@@ -44,7 +45,8 @@ public class RoomService {
 
   @Transactional
   public UpdatedRoom updateRoom(UUID id, UpdateRoom request) {
-    Room room = roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
+    Room room =
+        roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
 
     if (!room.getVenue().getId().equals(request.getVenueId())) {
       venueRepository
@@ -57,9 +59,10 @@ public class RoomService {
       throw new ConflictException("Room name already exists in this venue");
     }
 
-    Venue venue = venueRepository
-        .findById(request.getVenueId())
-        .orElseThrow(() -> new NotFoundException("Venue not found"));
+    Venue venue =
+        venueRepository
+            .findById(request.getVenueId())
+            .orElseThrow(() -> new NotFoundException("Venue not found"));
 
     room.setName(request.getName());
     room.setCapacity(request.getCapacity());
