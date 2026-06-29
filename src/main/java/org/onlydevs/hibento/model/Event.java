@@ -10,7 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
@@ -53,7 +52,6 @@ public class Event {
 
   @Column(name = "end_date")
   @NotNull
-  @FutureOrPresent
   private Instant endDate;
 
   @Column(name = "created_at")
