@@ -1,5 +1,6 @@
 package org.onlydevs.hibento.mapper;
 
+import java.util.UUID;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.CreatedSession;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.response.UpdatedSession;
 import org.onlydevs.hibento.model.EventSession;
@@ -7,6 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SessionMapper {
+
+  private UUID nullableRoomId(EventSession session) {
+    return session.getRoom() != null ? session.getRoom().getId() : null;
+  }
+
+  private String nullableRoomName(EventSession session) {
+    return session.getRoom() != null ? session.getRoom().getName() : null;
+  }
 
   public CreatedSession toCreatedSession(EventSession session) {
     return new CreatedSession(
@@ -16,8 +25,8 @@ public class SessionMapper {
         session.getDescription(),
         session.getStartTime(),
         session.getEndTime(),
-        session.getRoom().getId(),
-        session.getRoom().getName(),
+        nullableRoomId(session),
+        nullableRoomName(session),
         session.getCapacity(),
         session.getEventSessionSpeakers().stream().map(ess -> ess.getSpeaker().getId()).toList(),
         session.getCreatedAt(),
@@ -32,8 +41,8 @@ public class SessionMapper {
         session.getDescription(),
         session.getStartTime(),
         session.getEndTime(),
-        session.getRoom().getId(),
-        session.getRoom().getName(),
+        nullableRoomId(session),
+        nullableRoomName(session),
         session.getCapacity(),
         session.getEventSessionSpeakers().stream().map(ess -> ess.getSpeaker().getId()).toList(),
         session.getCreatedAt(),

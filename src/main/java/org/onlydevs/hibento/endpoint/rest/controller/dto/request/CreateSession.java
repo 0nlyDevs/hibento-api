@@ -29,7 +29,6 @@ public class CreateSession {
   @NotNull(message = "End time is required")
   private Instant endTime;
 
-  @NotNull(message = "Room ID is required")
   private UUID roomId;
 
   private Integer capacity;
