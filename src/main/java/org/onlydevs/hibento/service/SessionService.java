@@ -43,14 +43,17 @@ public class SessionService {
             .findById(eventId)
             .orElseThrow(() -> new NotFoundException("Event not found"));
 
-    Room room =
-        roomRepository
-            .findById(request.getRoomId())
-            .orElseThrow(() -> new NotFoundException("Room not found"));
+    Room room = null;
+    if (request.getRoomId() != null) {
+      room =
+          roomRepository
+              .findById(request.getRoomId())
+              .orElseThrow(() -> new NotFoundException("Room not found"));
 
-    if (sessionRepository.existsByRoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-        request.getRoomId(), request.getEndTime(), request.getStartTime())) {
-      throw new ConflictException("Room already has a session during this time");
+      if (sessionRepository.existsByRoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+          request.getRoomId(), request.getEndTime(), request.getStartTime())) {
+        throw new ConflictException("Room already has a session during this time");
+      }
     }
 
     EventSession session = new EventSession();
@@ -96,14 +99,18 @@ public class SessionService {
       throw new BadRequestException("Start time must be before end time");
     }
 
-    Room room =
-        roomRepository
-            .findById(request.getRoomId())
-            .orElseThrow(() -> new NotFoundException("Room not found"));
+    Room room = session.getRoom();
+    if (request.getRoomId() != null) {
+      room =
+          roomRepository
+              .findById(request.getRoomId())
+              .orElseThrow(() -> new NotFoundException("Room not found"));
 
-    if (sessionRepository.existsByRoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqualAndIdNot(
-        request.getRoomId(), request.getEndTime(), request.getStartTime(), id)) {
-      throw new ConflictException("Room already has a session during this time");
+      if (sessionRepository
+          .existsByRoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqualAndIdNot(
+              request.getRoomId(), request.getEndTime(), request.getStartTime(), id)) {
+        throw new ConflictException("Room already has a session during this time");
+      }
     }
 
     session.setTitle(request.getTitle());
