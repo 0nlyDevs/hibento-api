@@ -68,6 +68,13 @@ public class SessionService {
     session.setRoom(room);
 
     if (request.getSpeakerIds() != null) {
+      for (var speakerId : request.getSpeakerIds()) {
+        if (sessionRepository.existsBySpeakerIdAndOverlappingTime(
+            speakerId, request.getStartTime(), request.getEndTime())) {
+          throw new ConflictException(
+              "Speaker " + speakerId + " is already assigned to another session during this time");
+        }
+      }
       var speakers =
           request.getSpeakerIds().stream()
               .map(
@@ -112,6 +119,16 @@ public class SessionService {
           .existsByRoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqualAndIdNot(
               request.getRoomId(), request.getEndTime(), request.getStartTime(), id)) {
         throw new ConflictException("Room already has a session during this time");
+      }
+    }
+
+    if (request.getSpeakerIds() != null) {
+      for (var speakerId : request.getSpeakerIds()) {
+        if (sessionRepository.existsBySpeakerIdAndOverlappingTimeAndIdNot(
+            speakerId, request.getStartTime(), request.getEndTime(), id)) {
+          throw new ConflictException(
+              "Speaker " + speakerId + " is already assigned to another session during this time");
+        }
       }
     }
 
