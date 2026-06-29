@@ -1,6 +1,8 @@
 package org.onlydevs.hibento.service;
 
+import java.util.HashSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.onlydevs.hibento.endpoint.rest.controller.NotFoundException;
 import org.onlydevs.hibento.endpoint.rest.controller.dto.request.CreateSession;
@@ -120,24 +122,31 @@ public class SessionService {
     session.setCapacity(request.getCapacity());
     session.setRoom(room);
 
-    session.getEventSessionSpeakers().clear();
     if (request.getSpeakerIds() != null) {
-      var speakers =
-          request.getSpeakerIds().stream()
-              .map(
-                  speakerId -> {
-                    Speaker speaker =
-                        speakerRepository
-                            .findById(speakerId)
-                            .orElseThrow(
-                                () -> new NotFoundException("Speaker not found: " + speakerId));
-                    EventSessionSpeaker ess = new EventSessionSpeaker();
-                    ess.setEventSession(session);
-                    ess.setSpeaker(speaker);
-                    return ess;
-                  })
-              .toList();
-      session.getEventSessionSpeakers().addAll(speakers);
+      var currentSpeakerIds =
+          session.getEventSessionSpeakers().stream()
+              .map(ess -> ess.getSpeaker().getId())
+              .collect(Collectors.toSet());
+      if (!currentSpeakerIds.equals(new HashSet<>(request.getSpeakerIds()))) {
+        session.getEventSessionSpeakers().clear();
+        sessionRepository.flush();
+        var speakers =
+            request.getSpeakerIds().stream()
+                .map(
+                    speakerId -> {
+                      Speaker speaker =
+                          speakerRepository
+                              .findById(speakerId)
+                              .orElseThrow(
+                                  () -> new NotFoundException("Speaker not found: " + speakerId));
+                      EventSessionSpeaker ess = new EventSessionSpeaker();
+                      ess.setEventSession(session);
+                      ess.setSpeaker(speaker);
+                      return ess;
+                    })
+                .toList();
+        session.getEventSessionSpeakers().addAll(speakers);
+      }
     }
 
     EventSession updatedSession = sessionRepository.save(session);
