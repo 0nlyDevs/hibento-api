@@ -68,13 +68,6 @@ public class SessionService {
     session.setRoom(room);
 
     if (request.getSpeakerIds() != null) {
-      for (var speakerId : request.getSpeakerIds()) {
-        if (sessionRepository.existsBySpeakerIdAndOverlappingTime(
-            speakerId, request.getStartTime(), request.getEndTime())) {
-          throw new ConflictException(
-              "Speaker " + speakerId + " is already assigned to another session during this time");
-        }
-      }
       var speakers =
           request.getSpeakerIds().stream()
               .map(
@@ -90,6 +83,15 @@ public class SessionService {
                     return ess;
                   })
               .toList();
+      for (var ess : speakers) {
+        if (sessionRepository.existsBySpeakerIdAndOverlappingTime(
+            ess.getSpeaker().getId(), request.getStartTime(), request.getEndTime())) {
+          throw new ConflictException(
+              "Speaker "
+                  + ess.getSpeaker().getName()
+                  + " is already assigned to another session during this time");
+        }
+      }
       session.setEventSessionSpeakers(speakers);
     }
 
@@ -123,11 +125,28 @@ public class SessionService {
     }
 
     if (request.getSpeakerIds() != null) {
-      for (var speakerId : request.getSpeakerIds()) {
+      var speakers =
+          request.getSpeakerIds().stream()
+              .map(
+                  speakerId -> {
+                    Speaker speaker =
+                        speakerRepository
+                            .findById(speakerId)
+                            .orElseThrow(
+                                () -> new NotFoundException("Speaker not found: " + speakerId));
+                    EventSessionSpeaker ess = new EventSessionSpeaker();
+                    ess.setEventSession(session);
+                    ess.setSpeaker(speaker);
+                    return ess;
+                  })
+              .toList();
+      for (var ess : speakers) {
         if (sessionRepository.existsBySpeakerIdAndOverlappingTimeAndIdNot(
-            speakerId, request.getStartTime(), request.getEndTime(), id)) {
+            ess.getSpeaker().getId(), request.getStartTime(), request.getEndTime(), id)) {
           throw new ConflictException(
-              "Speaker " + speakerId + " is already assigned to another session during this time");
+              "Speaker "
+                  + ess.getSpeaker().getName()
+                  + " is already assigned to another session during this time");
         }
       }
     }
@@ -147,7 +166,7 @@ public class SessionService {
       if (!currentSpeakerIds.equals(new HashSet<>(request.getSpeakerIds()))) {
         session.getEventSessionSpeakers().clear();
         sessionRepository.flush();
-        var speakers =
+        var newSpeakers =
             request.getSpeakerIds().stream()
                 .map(
                     speakerId -> {
@@ -162,7 +181,7 @@ public class SessionService {
                       return ess;
                     })
                 .toList();
-        session.getEventSessionSpeakers().addAll(speakers);
+        session.getEventSessionSpeakers().addAll(newSpeakers);
       }
     }
 
